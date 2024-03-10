@@ -18,8 +18,8 @@ jobs:
 
       - name: Set up Git configuration
         run: |
-          git config user.email "actions@github.com"
-          git config user.name "GitHub Actions"
+          git config user.email "imran@stacklearner.com"
+          git config user.name "Imran Hasan"
 
       - name: Get commit hash from Docker image workflow
         id: get_commit_hash
