@@ -1,3 +1,4 @@
+# .github/workflows/update-k8s-config-email.yaml
 name: Update Kubernetes Config - Email Service
 
 on:
@@ -14,6 +15,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up Git configuration
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
 
       - name: Get commit hash from Docker image workflow
         id: get_commit_hash
@@ -36,5 +42,3 @@ jobs:
           else
               echo "GITHUB_SHA environment variable not set. Exiting."
           fi
-
-          # Continue with the rest of your steps...
