@@ -6,6 +6,8 @@ on:
     workflows: ["Build and Push Docker Image - Email Service"]
     types:
       - completed
+  workflow_dispatch:
+
 
 jobs:
   update-k8s-config:
