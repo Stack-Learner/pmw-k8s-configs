@@ -18,8 +18,8 @@ jobs:
 
       - name: Set up Git configuration
         run: |
-          git config --global user.email "imranimran-stacklearner"
-          git config --global user.name "Imran Hasan"
+          git config --global user.email "imran@stacklearner.com"
+          git config --global user.name "GitHub Actions"
 
       - name: Download and install yq
         run: |
@@ -46,7 +46,7 @@ jobs:
               git commit -m "Update image tag to $GITHUB_SHA"
               
               # Use the Personal Access Token for authentication
-              git push https://$GITHUB_ACTOR:$PAT_TOKEN@github.com/Stack-Learner/pmw-k8s-configs.git
+              git push https://$GITHUB_ACTOR:{{ secrets.PAT_TOKEN }}@github.com/Stack-Learner/pmw-k8s-configs.git
           else
               echo "GITHUB_SHA environment variable not set. Exiting."
           fi
