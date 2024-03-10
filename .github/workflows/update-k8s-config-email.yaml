@@ -1,4 +1,5 @@
-name: Update Deployment Image Tag
+# .github/workflows/update-k8s-config-email.yaml
+name: Update Kubernetes Config - Email Service
 
 on:
   workflow_run:
@@ -6,37 +7,44 @@ on:
     types:
       - completed
   workflow_dispatch:
-    
+
 jobs:
-  update-deployment:
+  update-k8s-config:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Install yq
+      - name: Set up Git configuration
         run: |
-          wget https://github.com/mikefarah/yq/releases/download/v4.11.2/yq_linux_amd64 -O /usr/bin/yq
-          chmod +x /usr/bin/yq
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
 
-      - name: Set Image Tag
-        id: set-image-tag
-        run: echo ::set-output name=IMAGE_TAG::$(echo ${{ github.sha }} | cut -c1-8)
-
-      - name: Update Deployment YAML
+      - name: Download and install yq
         run: |
-          yq eval --inplace '.spec.containers[0].image = "imranstacklearner/email:${{ steps.set-image-tag.outputs.IMAGE_TAG }}"' email-service/email-deployment.yaml
+          wget https://github.com/mikefarah/yq/releases/download/v4.11.2/yq_linux_amd64 -O $HOME/yq
+          chmod +x $HOME/yq
+          echo "$HOME" >> $GITHUB_PATH
 
-      - name: Configure Git
-        run: |
-          git config --global user.name "Imran Hasan"
-          git config --global user.email "imran@stacklearner.com"
-          git config --global credential.helper "store --file=.git-credentials"
+      - name: Get commit hash from Docker image workflow
+        id: get_commit_hash
+        run: echo "::set-output name=hash::$(cat $GITHUB_EVENT_PATH | jq -r '.workflow_run.head_commit.id')"
 
-      - name: Commit and Push Changes
+      - name: Fetch Kubernetes configurations from pmw-k8s-configs repository
         run: |
-          git add path/to/email-deployment.yaml
-          git commit -m "Update deployment image tag to ${{ steps.set-image-tag.outputs.IMAGE_TAG }}"
-          echo "machine github.com login $GITHUB_ACTOR password $PAT_TOKEN" > .git-credentials
-          git push
+          # Clone the repository containing Kubernetes configurations
+          git clone https://github.com/Stack-Learner/pmw-k8s-configs.git
+          cd pmw-k8s-configs/email-service
+
+          # Bash script to update image tag in deployment file
+          DEPLOYMENT_FILE="email-deployment.yaml"
+          if [ -n "$GITHUB_SHA" ]; then
+              $HOME/yq eval -i '.spec.containers[0].image |= "imranstacklearner/email:'"$GITHUB_SHA"'"' $DEPLOYMENT_FILE
+              echo "Updated image tag in $DEPLOYMENT_FILE to: $GITHUB_SHA"
+              git add $DEPLOYMENT_FILE
+              git commit -m "Update image tag to $GITHUB_SHA"
+              git push
+          else
+              echo "GITHUB_SHA environment variable not set. Exiting."
+          fi
