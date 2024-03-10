@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: email-deployment
+  labels:
+    app: email
+spec:
+  replicas: 3  # Adjust the number of replicas as needed
+  selector:
+    matchLabels:
+      app: email
+  template:
+    metadata:
+      labels:
+        app: email
+    spec:
+      containers:
+        - name: email
+          image: imranstacklearner/email:6391446  # Update with your actual Docker image name and tag
+          ports:
+            - containerPort: 5001  # Adjust the container port as needed
+          env:
+            - name: SMTP_HOST
+              value: "your_smtp_host"
+            - name: SMTP_PORT
+              value: "your_smtp_port"
+            - name: DEFAULT_SENDER_EMAIL
+              value: "your_default_sender_email"
+            # Add more environment variables as needed
+          resources:
+            requests:
+              memory: "64Mi"  # Adjust memory request
+              cpu: "250m"     # Adjust CPU request
+            limits:
+              memory: "128Mi" # Adjust memory limit
+              cpu: "500m"     # Adjust CPU limit
