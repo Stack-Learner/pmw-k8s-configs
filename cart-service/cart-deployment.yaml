@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cart-deployment
+spec:
+  replicas: 3  # Adjust the number of replicas as needed
+  selector:
+    matchLabels:
+      app: cart
+  template:
+    metadata:
+      labels:
+        app: cart
+    spec:
+      containers:
+        - name: cart
+          image: your-registry/your-cart-image:your-tag
+          ports:
+            - containerPort: 8080  # Adjust the container port as needed
+          env:
+            - name: REDIS_HOST
+              value: "your-redis-host"
+            - name: REDIS_PORT
+              value: "your-redis-port"
+            # Add more environment variables as needed
+          resources:
+            requests:
+              memory: "64Mi"  # Adjust memory request
+              cpu: "250m"     # Adjust CPU request
+            limits:
+              memory: "128Mi" # Adjust memory limit
+              cpu: "500m"     # Adjust CPU limit

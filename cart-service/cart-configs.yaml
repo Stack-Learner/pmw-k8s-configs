@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cart-service-config
+data:
+  config.yaml: |
+    maxItemsPerUser: 10
+    discountPercentage: 0.1
+    cartTimeout: 600
