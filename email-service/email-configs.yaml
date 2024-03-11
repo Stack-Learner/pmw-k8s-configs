@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: email-config
+data:
+  email-config.yaml: |
+    smtpHost: your_smtp_host
+    smtpPort: your_smtp_port
+    defaultSenderEmail: your_default_sender_email
