@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: inventory-config
+data:
+  inventory-config.yaml: |
+    databaseHost: your_database_host
+    databasePort: your_database_port

@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory-deployment
+  labels:
+    app: inventory
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: inventory
+  template:
+    metadata:
+      labels:
+        app: inventory
+    spec:
+      containers:
+        - name: inventory
+          image: imranstacklearner/inventory:latest
+          ports:
+            - containerPort: 5002
+          env:
+            - name: DATABASE_HOST
+              value: "your_database_host"
+            - name: DATABASE_PORT
+              value: "your_database_port"
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: inventory-secrets
+                  key: database-user
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: inventory-secrets
+                  key: database-password
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
