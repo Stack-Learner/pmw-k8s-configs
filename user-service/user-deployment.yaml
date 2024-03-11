@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-deployment
+  labels:
+    app: user
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: user
+  template:
+    metadata:
+      labels:
+        app: user
+    spec:
+      containers:
+        - name: user
+          image: imranstacklearner/user:latest
+          ports:
+            - containerPort: 5005
+          env:
+            - name: DATABASE_HOST
+              value: "your_database_host"
+            - name: DATABASE_PORT
+              value: "your_database_port"
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: user-secrets
+                  key: database-user
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: user-secrets
+                  key: database-password
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
