@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-stack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis-stack
+  template:
+    metadata:
+      labels:
+        app: redis-stack
+    spec:
+      containers:
+        - name: redis-stack
+          image: redis/redis-stack:latest
+          ports:
+            - containerPort: 6379
+            - containerPort: 8001
+          volumeMounts:
+            - mountPath: /var/lib/redis-stack
+              name: redis-stack-data
+          env:
+            - name: REDIS_ARGS
+              value: "--save 900 1"
+      volumes:
+        - name: redis-stack-data
+          persistentVolumeClaim:
+            claimName: redis-stack-pv-claim
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: redis-stack-pv-volume
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data/redis-stack" # Change this to the actual path on your host machine
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-stack-pv-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-stack
+spec:
+  ports:
+    - name: redis
+      port: 6379
+      targetPort: 6379
+      nodePort: 30379 # Specify the desired NodePort number
+    - name: http
+      port: 8001
+      targetPort: 8001
+      nodePort: 30801 # Specify the desired NodePort number
+  type: NodePort
+  selector:
+    app: redis-stack
