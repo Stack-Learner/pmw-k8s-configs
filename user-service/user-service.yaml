@@ -7,6 +7,6 @@ spec:
     app: user
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 5005
-  type: ClusterIP
+      port: 4000
+      # targetPort: 32999
+  type: NodePort

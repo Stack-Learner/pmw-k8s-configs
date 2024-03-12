@@ -5,7 +5,7 @@ metadata:
   labels:
     app: user
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: user
@@ -16,28 +16,28 @@ spec:
     spec:
       containers:
         - name: user
-          image: imranstacklearner/user:latest
+          image: imranstacklearner/user:ddd3aee
           ports:
-            - containerPort: 5005
+            - containerPort: 4000
           env:
-            - name: DATABASE_HOST
-              value: "your_database_host"
-            - name: DATABASE_PORT
-              value: "your_database_port"
-            - name: DATABASE_USER
-              valueFrom:
-                secretKeyRef:
-                  name: user-secrets
-                  key: database-user
-            - name: DATABASE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: user-secrets
-                  key: database-password
-          resources:
-            requests:
-              memory: "128Mi"
-              cpu: "250m"
-            limits:
-              memory: "256Mi"
-              cpu: "500m"
+            - name: USER_DATABASE_URL
+              value: "postgresql://postgres:root@postgres.default.svc.cluster.local:5432/user_db?schema=public"
+            # - name: DATABASE_PORT
+            #   value: "your_database_port"
+            # - name: USER_DATABASE_URL
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: user-database-url
+            #       key: database-url
+            # - name: DATABASE_PASSWORD
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: user-secrets
+            #       key: database-password
+          # resources:
+          #   requests:
+          #     memory: "128Mi"
+          #     cpu: "250m"
+          #   limits:
+          #     memory: "256Mi"
+          #     cpu: "500m"
