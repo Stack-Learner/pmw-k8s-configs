@@ -5,7 +5,7 @@ metadata:
   labels:
     app: email
 spec:
-  replicas: 3  # Adjust the number of replicas as needed
+  replicas: 1 # Adjust the number of replicas as needed
   selector:
     matchLabels:
       app: email
@@ -16,21 +16,34 @@ spec:
     spec:
       containers:
         - name: email
-          image: imranstacklearner/email:6391446  # Update with your actual Docker image name and tag
+          image: imranstacklearner/email:136923c # Update with your actual Docker image name and tag
           ports:
-            - containerPort: 5001  # Adjust the container port as needed
+            - containerPort: 4005  # Adjust the container port as needed
           env:
+            - name: MAIL_DATABASE_URL
+              value: "postgresql://postgres:root@postgres.default.svc.cluster.local:5432/mail_db?schema=public"
             - name: SMTP_HOST
-              value: "your_smtp_host"
+              value: "smtp.gmail.com"
             - name: SMTP_PORT
-              value: "your_smtp_port"
+              value: "587"
+            - name: GOOGLE_SMTP_USER
+              value: "imran@stacklearner.com"
             - name: DEFAULT_SENDER_EMAIL
-              value: "your_default_sender_email"
-            # Add more environment variables as needed
-          resources:
-            requests:
-              memory: "64Mi"  # Adjust memory request
-              cpu: "250m"     # Adjust CPU request
-            limits:
-              memory: "128Mi" # Adjust memory limit
-              cpu: "500m"     # Adjust CPU limit
+              value: "imran@stacklearner.com"
+            - name: RABBITMQ_URL
+              value: "amqp://guest:guest@pmw-rabbit-mq.default.svc.cluster.local:5672/"
+            # I want to GOOGLE_SMTP_PASSWORD as a secret
+            - name: GOOGLE_SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: email-secrets
+                  key: google-smtp-password
+
+          #   # Add more environment variables as needed
+          # resources:
+          #   requests:
+          #     memory: "64Mi"  # Adjust memory request
+          #     cpu: "250m"     # Adjust CPU request
+          #   limits:
+          #     memory: "128Mi" # Adjust memory limit
+          #     cpu: "500m"     # Adjust CPU limit
