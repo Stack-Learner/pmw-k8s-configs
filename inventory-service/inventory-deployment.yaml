@@ -5,7 +5,7 @@ metadata:
   labels:
     app: inventory
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: inventory
@@ -16,28 +16,28 @@ spec:
     spec:
       containers:
         - name: inventory
-          image: imranstacklearner/inventory:latest
+          image: imranstacklearner/inventory:533f238
           ports:
-            - containerPort: 5002
+            - containerPort: 4002
           env:
-            - name: DATABASE_HOST
-              value: "your_database_host"
-            - name: DATABASE_PORT
-              value: "your_database_port"
-            - name: DATABASE_USER
-              valueFrom:
-                secretKeyRef:
-                  name: inventory-secrets
-                  key: database-user
-            - name: DATABASE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: inventory-secrets
-                  key: database-password
-          resources:
-            requests:
-              memory: "128Mi"
-              cpu: "250m"
-            limits:
-              memory: "256Mi"
-              cpu: "500m"
+            - name: INVENTORY_DATABASE_URL
+              value: "postgresql://postgres:root@postgres.default.svc.cluster.local:5432/inventory_db?schema=public"
+            # - name: DATABASE_PORT
+            #   value: "your_database_port"
+            # - name: DATABASE_USER
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: inventory-secrets
+            #       key: database-user
+            # - name: DATABASE_PASSWORD
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: inventory-secrets
+            #       key: database-password
+          # resources:
+          #   requests:
+          #     memory: "128Mi"
+          #     cpu: "250m"
+          #   limits:
+          #     memory: "256Mi"
+          #     cpu: "500m"

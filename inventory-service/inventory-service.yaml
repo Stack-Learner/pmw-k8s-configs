@@ -7,6 +7,7 @@ spec:
     app: inventory
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 5002
-  type: ClusterIP
+      port: 4002
+      targetPort: 4002
+  type: NodePort
+  nodePort: 30080  # You can choose a specific port within the allowed range
