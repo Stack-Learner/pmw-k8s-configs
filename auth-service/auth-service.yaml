@@ -7,5 +7,6 @@ spec:
     app: auth
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 8080  # Assuming your authentication service is running on port 8080
+      port: 4003
+      targetPort: 4003
+  type: NodePort
