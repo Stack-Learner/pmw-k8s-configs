@@ -5,7 +5,7 @@ metadata:
   labels:
     app: order
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: order
@@ -16,28 +16,37 @@ spec:
     spec:
       containers:
         - name: order
-          image: imranstacklearner/order:latest
+          image: imranstacklearner/order:462647f
           ports:
-            - containerPort: 5003
+            - containerPort: 4007
           env:
-            - name: DATABASE_HOST
-              value: "your_database_host"
-            - name: DATABASE_PORT
-              value: "your_database_port"
-            - name: DATABASE_USER
-              valueFrom:
-                secretKeyRef:
-                  name: order-secrets
-                  key: database-user
-            - name: DATABASE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: order-secrets
-                  key: database-password
-          resources:
-            requests:
-              memory: "128Mi"
-              cpu: "250m"
-            limits:
-              memory: "256Mi"
-              cpu: "500m"
+            - name: ORDER_DATABASE_URL
+              value: "postgresql://postgres:root@postgres.default.svc.cluster.local:5432/order_db?schema=public"
+            - name: CART_SERVICE_URL
+              value: "http://cart-service.default.svc.cluster.local:4004"
+            - name: EMAIL_SERVICE_URL
+              value: "http://email-service.default.svc.cluster.local:4005"
+            - name: PRODUCT_SERVICE_URL
+              value: "http://product-service.default.svc.cluster.local:4001"
+            - name: RABBITMQ_URL
+              value: "amqp://guest:guest@pmw-rabbit-mq.default.svc.cluster.local:5672/"
+
+
+
+          #   - name: DATABASE_USER
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: order-secrets
+          #         key: database-user
+          #   - name: DATABASE_PASSWORD
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: order-secrets
+          #         key: database-password
+          # resources:
+          #   requests:
+          #     memory: "128Mi"
+          #     cpu: "250m"
+          #   limits:
+          #     memory: "256Mi"
+          #     cpu: "500m"
