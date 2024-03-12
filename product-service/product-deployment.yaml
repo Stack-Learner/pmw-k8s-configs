@@ -5,7 +5,7 @@ metadata:
   labels:
     app: product
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: product
@@ -16,28 +16,28 @@ spec:
     spec:
       containers:
         - name: product
-          image: imranstacklearner/product:latest
+          image: imranstacklearner/product:813ebc5
           ports:
-            - containerPort: 5004
+            - containerPort: 4001
           env:
-            - name: DATABASE_HOST
-              value: "your_database_host"
-            - name: DATABASE_PORT
-              value: "your_database_port"
-            - name: DATABASE_USER
-              valueFrom:
-                secretKeyRef:
-                  name: product-secrets
-                  key: database-user
-            - name: DATABASE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: product-secrets
-                  key: database-password
-          resources:
-            requests:
-              memory: "128Mi"
-              cpu: "250m"
-            limits:
-              memory: "256Mi"
-              cpu: "500m"
+            - name: PRODUCT_DATABASE_URL
+              value: "postgresql://postgres:root@postgres.default.svc.cluster.local:5432/product_db?schema=public"
+            - name: INVENTORY_SERVICE_URL
+              value: "http://inventory-service.default.svc.cluster.local:4002"
+          #   - name: DATABASE_USER
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: product-secrets
+          #         key: database-user
+          #   - name: DATABASE_PASSWORD
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: product-secrets
+          #         key: database-password
+          # resources:
+          #   requests:
+          #     memory: "128Mi"
+          #     cpu: "250m"
+          #   limits:
+          #     memory: "256Mi"
+          #     cpu: "500m"

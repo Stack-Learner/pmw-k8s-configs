@@ -7,6 +7,6 @@ spec:
     app: product
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 5004
-  type: ClusterIP
+      port: 40001
+      targetPort: 4001
+  type: NodePort
