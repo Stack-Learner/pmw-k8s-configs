@@ -7,5 +7,6 @@ spec:
     app: cart
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 8080  # Assuming your cart service is running on port 8080
+      port: 4004
+      targetPort: 4004
+  type: NodePort
