@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: konga
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: konga
+  template:
+    metadata:
+      labels:
+        app: konga
+    spec:
+      containers:
+        - name: konga
+          image: pantsel/konga:latest
+          ports:
+            - containerPort: 1337
+          env:
+            - name: DB_ADAPTER
+              value: postgres
+            - name: DB_URI
+              value: postgresql://postgres:root@postgres.default.svc.cluster.local:5432/konga
+            - name: NODE_ENV
+              value: production
+      restartPolicy: Always

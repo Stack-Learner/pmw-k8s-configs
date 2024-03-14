@@ -5,4 +5,4 @@ metadata:
 data:
   inventory-config.yaml: |
     databaseHost: your_database_host
-    databasePort: your_database_port
+    databasePort: 

@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres
+  name: postgres-96
 spec:
   selector:
     matchLabels:
-      app: postgres
+      app: postgres-96
   replicas: 1
   template:
     metadata:
       labels:
-        app: postgres
+        app: postgres-96
     spec:
       containers:
         - name: postgres
-          image: postgres:11.5
+          image: postgres:9.6
           imagePullPolicy: "IfNotPresent"
           envFrom:
             - configMapRef:
@@ -25,7 +25,7 @@ spec:
       volumes:
         - name: postgredb
           persistentVolumeClaim:
-            claimName: postgres-pv-claim  # Corrected PVC name
+            claimName: postgres-pv-claim
 ---
 kind: PersistentVolume
 apiVersion: v1
@@ -33,7 +33,7 @@ metadata:
   name: postgres-pv-volume
   labels:
     type: local
-    app: postgres
+    app: postgres-96
 spec:
   storageClassName: manual
   capacity:
@@ -41,14 +41,14 @@ spec:
   accessModes:
     - ReadWriteMany
   hostPath:
-    path: "/mnt/data"
+    path: "/mnt/data"  # Changed path
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: postgres-pv-claim  # Corrected PVC name
+  name: postgres-pv-claim
   labels:
-    app: postgres
+    app: postgres-96
 spec:
   storageClassName: manual
   accessModes:
@@ -62,7 +62,7 @@ kind: ConfigMap
 metadata:
   name: postgres-config
   labels:
-    app: postgres
+    app: postgres-96
 data:
   POSTGRES_DB: postgresdb
   POSTGRES_USER: postgres
@@ -71,14 +71,14 @@ data:
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres
+  name: postgres-96
   labels:
-    app: postgres
+    app: postgres-96
 spec:
   ports:
     - name: postgres
-      port: 5432
+      port: 5433  # Different port number
       targetPort: 5432
   type: ClusterIP
   selector:
-    app: postgres
+    app: postgres-96

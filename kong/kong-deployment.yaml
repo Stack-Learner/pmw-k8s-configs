@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kong
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kong
+  template:
+    metadata:
+      labels:
+        app: kong
+    spec:
+      initContainers:
+        - name: kong-migration
+          image: imranstacklearner/kong-oidc-custom-plugin:16b46da
+          command: ["kong", "migrations", "bootstrap"]
+          env:
+            - name: KONG_DATABASE
+              value: "postgres"
+            - name: KONG_PG_HOST
+              value: "postgres.default.svc.cluster.local"
+            - name: KONG_PG_DATABASE
+              value: "kong"
+            - name: KONG_PG_USER
+              value: "postgres"
+            - name: KONG_PG_PASSWORD
+              value: "root"
+      containers:
+        - name: kong
+          image: imranstacklearner/kong-oidc-custom-plugin:16b46da
+          ports:
+            - containerPort: 8000
+            - containerPort: 8001
+            - containerPort: 8443
+            - containerPort: 8444
+          env:
+            - name: KONG_DATABASE
+              value: "postgres"
+            - name: KONG_PG_HOST
+              value: "postgres.default.svc.cluster.local"
+            - name: KONG_PG_DATABASE
+              value: "kong"
+            - name: KONG_PG_USER
+              value: "postgres"
+            - name: KONG_PG_PASSWORD
+              value: "root"
+            - name: KONG_ADMIN_LISTEN
+              value: "0.0.0.0:8001,0.0.0.0:8444 ssl"
+            - name: KONG_PLUGINSERVER_NAMES
+              value: "js"
+            - name: KONG_PLUGINSERVER_JS_SOCKET
+              value: "/usr/local/kong/js_pluginserver.sock"
+            - name: KONG_PLUGINSERVER_JS_START_CMD
+              value: "/usr/local/bin/kong-js-pluginserver -v --plugins-directory /usr/local/kong/js-plugins"
+            - name: KONG_PLUGINSERVER_JS_QUERY_CMD
+              value: "/usr/local/bin/kong-js-pluginserver --plugins-directory /usr/local/kong/js-plugins --dump-all-plugins"
+            - name: KONG_PLUGINS
+              value: "bundled,oidc"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kong-service
+  labels:
+    app: kong
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8000
+    - name: https
+      port: 443
+      targetPort: 8443
+    - name: admin
+      port: 8001
+      targetPort: 8001
+    - name: admin-ssl
+      port: 8444
+      targetPort: 8444
+  selector:
+    app: kong
+  type: ClusterIP
