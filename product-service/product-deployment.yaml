@@ -18,6 +18,9 @@ spec:
         - name: migration
           image: imranstacklearner/product:813ebc5
           command: ["yarn", "migrate:dev"]
+          env:
+            - name: PRODUCT_DATABASE_URL
+              value: "postgresql://postgres:root@postgres.default.svc.cluster.local:5432/product_db?schema=public"
       containers:
         - name: product
           image: imranstacklearner/product:813ebc5
