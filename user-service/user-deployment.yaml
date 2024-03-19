@@ -14,6 +14,13 @@ spec:
       labels:
         app: user
     spec:
+      initContainers:
+        - name: migration
+          image: imranstacklearner/user:ddd3aee
+          command: ["yarn", "migrate:dev"]
+          env:
+            - name: USER_DATABASE_URL
+              value: "postgresql://postgres:root@postgres.default.svc.cluster.local:5432/user_db?schema=public"
       containers:
         - name: user
           image: imranstacklearner/user:ddd3aee
@@ -22,22 +29,4 @@ spec:
           env:
             - name: USER_DATABASE_URL
               value: "postgresql://postgres:root@postgres.default.svc.cluster.local:5432/user_db?schema=public"
-            # - name: DATABASE_PORT
-            #   value: "your_database_port"
-            # - name: USER_DATABASE_URL
-            #   valueFrom:
-            #     secretKeyRef:
-            #       name: user-database-url
-            #       key: database-url
-            # - name: DATABASE_PASSWORD
-            #   valueFrom:
-            #     secretKeyRef:
-            #       name: user-secrets
-            #       key: database-password
-          # resources:
-          #   requests:
-          #     memory: "128Mi"
-          #     cpu: "250m"
-          #   limits:
-          #     memory: "256Mi"
-          #     cpu: "500m"
+            # Add other database environment variables here if needed
