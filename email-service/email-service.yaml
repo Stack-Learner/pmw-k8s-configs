@@ -7,6 +7,6 @@ spec:
     app: email
   ports:
     - protocol: TCP
-      port: 4005
+      port: 80
       targetPort: 4005
-  type: NodePort
+  type: ClusterIP

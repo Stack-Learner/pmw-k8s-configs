@@ -14,6 +14,14 @@ spec:
       labels:
         app: inventory
     spec:
+      initContainers:
+        - name: migration-init-container
+          image: imranstacklearner/inventory:533f238  # Same image as the main container
+          command: ["yarn", "migrate:dev"]  # Command to run yarn migrate:dev
+          env:
+            - name: INVENTORY_DATABASE_URL
+              value: "postgresql://postgres:root@postgres.default.svc.cluster.local:5432/inventory_db?schema=public"
+            # Add more environment variables as needed for migration
       containers:
         - name: inventory
           image: imranstacklearner/inventory:533f238

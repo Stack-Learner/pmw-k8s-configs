@@ -1,4 +1,3 @@
-# pmw-k8s-configs/auth-service/auth-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,6 +14,13 @@ spec:
       labels:
         app: auth
     spec:
+      initContainers:
+        - name: migration-init-container
+          image: imranstacklearner/auth:b602a48  # Same image as the main container
+          command: ["yarn", "migrate:dev"]  # Command to run yarn migration:dev
+          envFrom:
+            - configMapRef:
+                name: auth-config  # Reference to the ConfigMap for environment variables
       containers:
         - name: auth
           image: imranstacklearner/auth:b602a48
@@ -22,7 +28,7 @@ spec:
             - containerPort: 4003
           envFrom:
             - configMapRef:
-                name: auth-config  # Reference to the ConfigMap
+                name: auth-config  # Reference to the ConfigMap for environment variables
           #   - secretRef:
           #       name: auth-secrets  # Reference to the Secret
           # resources:

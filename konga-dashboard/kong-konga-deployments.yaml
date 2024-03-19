@@ -12,6 +12,25 @@ spec:
       labels:
         app: konga
     spec:
+      initContainers:
+        - name: konga-init-db
+          image: postgres:11.5
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              sleep 10
+              if psql -h postgres.default.svc.cluster.local -U postgres -lqt | cut -d \| -f 1 | grep -qw konga; then
+                echo "Database 'konga' already exists, exiting..."
+                exit 0
+              else
+                psql -h postgres.default.svc.cluster.local -U postgres -c "CREATE DATABASE konga;"
+              fi
+          env:
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: konga-secrets
+                  key: DB_PASSWORD
       containers:
         - name: konga
           image: pantsel/konga:latest

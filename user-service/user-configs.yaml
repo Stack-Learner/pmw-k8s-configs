@@ -4,5 +4,5 @@ metadata:
   name: user-config
 data:
   user-config.yaml: |
-    databaseHost: your_database_host
-    databasePort: your_database_port
+    databaseHost: 
+    databasePort: 

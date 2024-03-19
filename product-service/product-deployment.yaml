@@ -14,6 +14,10 @@ spec:
       labels:
         app: product
     spec:
+      initContainers:
+        - name: migration
+          image: imranstacklearner/product:813ebc5
+          command: ["yarn", "migrate:dev"]
       containers:
         - name: product
           image: imranstacklearner/product:813ebc5
@@ -23,21 +27,4 @@ spec:
             - name: PRODUCT_DATABASE_URL
               value: "postgresql://postgres:root@postgres.default.svc.cluster.local:5432/product_db?schema=public"
             - name: INVENTORY_SERVICE_URL
-              value: "http://inventory-service.default.svc.cluster.local:4002"
-          #   - name: DATABASE_USER
-          #     valueFrom:
-          #       secretKeyRef:
-          #         name: product-secrets
-          #         key: database-user
-          #   - name: DATABASE_PASSWORD
-          #     valueFrom:
-          #       secretKeyRef:
-          #         name: product-secrets
-          #         key: database-password
-          # resources:
-          #   requests:
-          #     memory: "128Mi"
-          #     cpu: "250m"
-          #   limits:
-          #     memory: "256Mi"
-          #     cpu: "500m"
+              value: "http://inventory-service.default.svc.cluster.local"

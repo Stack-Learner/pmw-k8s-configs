@@ -7,6 +7,6 @@ spec:
     app: cart
   ports:
     - protocol: TCP
-      port: 4004
+      port: 80
       targetPort: 4004
-  type: NodePort
+  type: ClusterIP

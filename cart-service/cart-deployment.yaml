@@ -25,9 +25,9 @@ spec:
             - name: CART_TTL
               value: "120"  
             - name: INVENTORY_SERVICE_URL
-              value: "http://inventory-service.default.svc.cluster.local:4002"
+              value: "http://inventory-service.default.svc.cluster.local"
             - name: RABBITMQ_URL
-              value: "amqp://guest:guest@pmw-rabbit-mq.default.svc.cluster.local:5672/"
+              value: "amqp://guest:guest@pmw-rabbit-mq.default.svc.cluster.local/"
               
             # Add more environment variables as needed
           # resources:

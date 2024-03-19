@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: keycloak-init-db
+spec:
+  template:
+    metadata:
+      name: keycloak-init-db
+    spec:
+      containers:
+        - name: init-db
+          image: postgres:11.5
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              sleep 10
+              if psql -h postgres.default.svc.cluster.local -U postgres -lqt | cut -d \| -f 1 | grep -qw keycloak; then
+                echo "Database 'keycloak' already exists, exiting..."
+                exit 0
+              else
+                psql -h postgres.default.svc.cluster.local -U postgres -c "CREATE DATABASE keycloak;"
+              fi
+          env:
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak-secrets
+                  key: DB_PASSWORD
+      restartPolicy: Never

@@ -14,6 +14,13 @@ spec:
       labels:
         app: order
     spec:
+      initContainers:
+        - name: order-migrate
+          image: imranstacklearner/order:462647f
+          command: ["yarn" , "migrate:dev"]
+          env:
+            - name: ORDER_DATABASE_URL
+              value: "postgresql://postgres:root@postgres.default.svc.cluster.local:5432/order_db?schema=public"
       containers:
         - name: order
           image: imranstacklearner/order:462647f
@@ -23,30 +30,10 @@ spec:
             - name: ORDER_DATABASE_URL
               value: "postgresql://postgres:root@postgres.default.svc.cluster.local:5432/order_db?schema=public"
             - name: CART_SERVICE_URL
-              value: "http://cart-service.default.svc.cluster.local:4004"
+              value: "http://cart-service.default.svc.cluster.local"
             - name: EMAIL_SERVICE_URL
-              value: "http://email-service.default.svc.cluster.local:4005"
+              value: "http://email-service.default.svc.cluster.local"
             - name: PRODUCT_SERVICE_URL
-              value: "http://product-service.default.svc.cluster.local:4001"
+              value: "http://product-service.default.svc.cluster.local"
             - name: RABBITMQ_URL
-              value: "amqp://guest:guest@pmw-rabbit-mq.default.svc.cluster.local:5672/"
-
-
-
-          #   - name: DATABASE_USER
-          #     valueFrom:
-          #       secretKeyRef:
-          #         name: order-secrets
-          #         key: database-user
-          #   - name: DATABASE_PASSWORD
-          #     valueFrom:
-          #       secretKeyRef:
-          #         name: order-secrets
-          #         key: database-password
-          # resources:
-          #   requests:
-          #     memory: "128Mi"
-          #     cpu: "250m"
-          #   limits:
-          #     memory: "256Mi"
-          #     cpu: "500m"
+              value: "amqp://guest:guest@pmw-rabbit-mq.default.svc.cluster.local/"

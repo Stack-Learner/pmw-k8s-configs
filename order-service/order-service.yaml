@@ -7,6 +7,6 @@ spec:
     app: order
   ports:
     - protocol: TCP
-      port: 4007
+      port: 80
       targetPort: 4007
-  type: NodePort
+  type: ClusterIP

@@ -5,7 +5,7 @@ metadata:
   labels:
     app: email
 spec:
-  replicas: 1 # Adjust the number of replicas as needed
+  replicas: 1
   selector:
     matchLabels:
       app: email
@@ -14,11 +14,19 @@ spec:
       labels:
         app: email
     spec:
+      initContainers:
+        - name: migration-init-container
+          image: imranstacklearner/email:136923c  # Same image as the main container
+          command: ["yarn", "migrate:dev"]  # Command to run yarn migrate:dev
+          env:
+            - name: MAIL_DATABASE_URL
+              value: "postgresql://postgres:root@postgres.default.svc.cluster.local:5432/mail_db?schema=public"
+            # Add more environment variables as needed for migration
       containers:
         - name: email
-          image: imranstacklearner/email:136923c # Update with your actual Docker image name and tag
+          image: imranstacklearner/email:136923c
           ports:
-            - containerPort: 4005  # Adjust the container port as needed
+            - containerPort: 4005
           env:
             - name: MAIL_DATABASE_URL
               value: "postgresql://postgres:root@postgres.default.svc.cluster.local:5432/mail_db?schema=public"
@@ -38,7 +46,6 @@ spec:
                 secretKeyRef:
                   name: email-secrets
                   key: google-smtp-password
-
           #   # Add more environment variables as needed
           # resources:
           #   requests:

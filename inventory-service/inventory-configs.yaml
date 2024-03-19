@@ -4,5 +4,5 @@ metadata:
   name: inventory-config
 data:
   inventory-config.yaml: |
-    databaseHost: your_database_host
+    databaseHost: 
     databasePort: 
